@@ -31,6 +31,7 @@ const MyStack = () => {
                     <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
                     <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
                     <Stack.Screen name="Map" component={Map} />
+
                 </Stack.Navigator> : <Navigate />}
         </NavigationContainer>
     );

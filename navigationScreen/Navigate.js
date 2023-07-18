@@ -6,12 +6,14 @@ import {
   View,
 } from 'react-native';
 import React, { Suspense, useEffect } from 'react';
+import { Button } from 'react-native-paper';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AddClient from '../component/clients/addClient';
 import Map from "../common/map"
 import EditProfile from '../component/profile/editProfile';
 import { Color } from '../constants/colors';
+import MultiStepForm from '../component/reports/addReport';
 
 const LazyTabComponent = React.lazy(() => import('./TabsNavigate'));
 const LazyReportComponent = React.lazy(() => import('../component/reports'));
@@ -44,14 +46,14 @@ export default function Navigate() {
 
   return (
     <Stack.Navigator
-    screenOptions={{
-      headerTitleAlign: 'center',
-      headerStyle: { backgroundColor: '#ECF4F3', borderBottomWidth: 1 },
-      headerTitleStyle: {
-        color: Color.main,
-      },
-      animationEnabled: false,
-    }}>
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerStyle: { backgroundColor: '#ECF4F3', borderBottomWidth: 1 },
+        headerTitleStyle: {
+          color: Color.main,
+        },
+        animationEnabled: false,
+      }}>
       <Stack.Screen
         name="TabsStack"
         component={TabWrapper}
@@ -61,20 +63,35 @@ export default function Navigate() {
       <Stack.Screen
         name="Report List"
         component={ReportWrapper}
-        options={{
+        options={({ navigation }) => ({
           unmountOnBlur: true,
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 16 }}
               onPress={() => {
-                // Handle the plus icon button press event for the Report screen
+                navigation.navigate('Add Report')
               }}>
               <Icon name="add" size={24} color="black" />
             </TouchableOpacity>
           ),
-        }}
+        })}
       />
-       <Stack.Screen
+      <Stack.Screen
+        name="Add Report"
+        component={MultiStepForm}
+        options={() => ({
+          headerRight: () => (
+            <Button
+              onPress={()=>console.log("save")}
+              textColor={Color.main}
+              labelStyle={{ fontSize: 16 }}
+            >
+              Save
+            </Button>
+          ),
+        })}
+      />
+      <Stack.Screen
         name="Edit Profile"
         component={EditProfile}
         options={{
