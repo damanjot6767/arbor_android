@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllProperties } from "../../actions/property";
 import { Color } from '../../constants/colors';
 import { ListItem } from '../../common/list';
+import { ActivityIndicator } from 'react-native-paper';
 
 export default function Property() {
    const dispatch = useDispatch()
-   const { properties } = useSelector(({ property }) => property)
+   const { properties , loader} = useSelector(({ property }) => property)
    console.log("prop", properties)
 
    useEffect(() => {
@@ -27,13 +28,16 @@ export default function Property() {
          </View>
          {/* <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}> */}
          {/* List of items */}
+         {loader ?
+        <ActivityIndicator style={{flex:1}} animating={true} color={Color.main} size={70} />
+        :
          <FlatList
             data={properties}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => <ListItem item={item} label="property" />}
-         />
+         />}
          {/* {properties?.length ?
                properties?.map((prop) => (
                   <View key={prop?._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6, margin: 3 }}>

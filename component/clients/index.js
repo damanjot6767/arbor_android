@@ -5,10 +5,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchClients } from '../../actions/client';
 import { Color } from '../../constants/colors';
 import { ListItem } from '../../common/list';
+import { ActivityIndicator } from 'react-native-paper';
 
 export default function Client() {
    const dispatch = useDispatch()
-   const { clients } = useSelector(({ client }) => client)
+   const { clients, loader} = useSelector(({ client }) => client)
    console.log("clients", clients?.map((client) => client.clientName))
    useEffect(() => {
       dispatch(fetchClients())
@@ -25,13 +26,16 @@ export default function Client() {
          </View>
          {/* <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}> */}
          {/* List of items */}
+         {loader ?
+        <ActivityIndicator style={{flex:1}} animating={true} color={Color.main} size={70} />
+        :
          <FlatList
             data={clients}
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => <ListItem item={item} label="clients" />}
-         />
+         />}
          {/* {clients?.length ?
             clients?.map((client) => (
                <View key={client._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6, margin: 3 }}>

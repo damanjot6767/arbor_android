@@ -3,7 +3,8 @@ import { ACTION_TYPES } from "../constants/actionTypes";
 import {
   arboristsLogin,
   forgotPassword,
-  generatePassCode
+  generatePassCode,
+  fetchArboristProfile
 } from "../services/api"
 import { Alert } from "react-native";
 import { ErrorAlert } from "../common/alert";
@@ -87,5 +88,21 @@ export const generateCode = (res, setCodeSent) => async (dispatch, getState) => 
     console.log(err);
     dispatch({ type: ACTION_TYPES.ARBORIST_GENERATECODE_FAILED })
     ErrorAlert(err)
+  }
+}
+
+export const getProfile = () => async (dispatch, getState) => {
+  try {
+      dispatch({ type: ACTION_TYPES.FETCH_ARBOR_PROFILE_REQUEST })
+      const { data } = await fetchArboristProfile()
+      dispatch({ type: ACTION_TYPES.FETCH_ARBOR_PROFILE_SUCCESS, payload: data.data })
+  }
+  catch (err) {
+      console.log(err);
+      dispatch({ type: ACTION_TYPES.FETCH_ARBOR_PROFILE_FAILED })
+      ErrorAlert(err)    
+      if(err.response.data.error==="Session Expired"){
+          dispatch(arboristLogout())
+      }
   }
 }

@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getReport } from '../../actions/report';
 import { Color } from '../../constants/colors';
 import { ListItem } from '../../common/list';
+import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 
 export default function Report({ navigation }) {
   const dispatch = useDispatch()
   const [selectedText, setSelectedText] = useState('Text 1');
-  const { allReports } = useSelector(({ report }) => report)
+  const { allReports, loader } = useSelector(({ report }) => report)
   console.log("report", allReports?.data?.map((val) => val?.reportName))
 
   useEffect(() => {
@@ -44,13 +45,15 @@ export default function Report({ navigation }) {
       </View>
       {/* <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}> */}
       {/* List of items */}
-      <FlatList
-        data={allReports?.data}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => <ListItem item={item} label="reports" />}
-      />
+      {loader ?
+        <ActivityIndicator style={{flex:1}} animating={true} color={Color.main} size={70} />
+        : <FlatList
+          data={allReports?.data}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => <ListItem item={item} label="reports" />}
+        />}
       {/* {allReports?.data?.length ? allReports?.data?.map((row) => (
           <View key={row?._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6, margin:3 }}>
             <View style={{ padding: 15, backgroundColor: Color.white, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 15 }}>

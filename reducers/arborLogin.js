@@ -37,6 +37,12 @@ export const arboristLogin = (state = initialState, action) => {
             return { ...state, forgotPasswordEmail: action.payload, loader: false }
         case ACTION_TYPES.ARBORIST_FORGOTPASSWORD_FAILED:
             return { ...state, forgotPasswordEmail: action.payload, loader: false }
+        case ACTION_TYPES.FETCH_ARBOR_PROFILE_REQUEST:
+            return { ...state, loader: true }
+        case ACTION_TYPES.FETCH_ARBOR_PROFILE_SUCCESS:
+            return { ...state, arbor: action.payload, loader: false }
+        case ACTION_TYPES.FETCH_ARBOR_PROFILE_FAILED:
+            return { ...state, loader: false }
         default:
             return state
     }

@@ -26,6 +26,7 @@ const API = axios.create({
 export const arboristsLogin = (data) => axios.post("http://3.14.140.178/arborist/login", data);
 export const generatePassCode = (data) => axios.post("http://3.14.140.178/arborist/forgotpasswordgeneratecode", data)
 export const forgotPassword = (data) => axios.post("http://3.14.140.178/arborist/forgotpassword", data)
+export const fetchArboristProfile = () => API.get("arborist/profile")
 
 //------------------------------------------------------------------------------------------------------Clients
 
