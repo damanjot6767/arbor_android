@@ -1,9 +1,10 @@
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllProperties } from "../../actions/property";
 import { Color } from '../../constants/colors';
+import { ListItem } from '../../common/list';
 
 export default function Property() {
    const dispatch = useDispatch()
@@ -24,9 +25,16 @@ export default function Property() {
             />
 
          </View>
-         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-            {/* List of items */}
-            {properties?.length ?
+         {/* <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}> */}
+         {/* List of items */}
+         <FlatList
+            data={properties}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => <ListItem item={item} label="property" />}
+         />
+         {/* {properties?.length ?
                properties?.map((prop) => (
                   <View key={prop?._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6, margin: 3 }}>
                      <View style={{ padding: 15, backgroundColor: Color.white, width: '100%', flexDirection: '1', borderRadius: 15 }}>
@@ -34,8 +42,8 @@ export default function Property() {
                         <Text style={{ fontSize: 16, marginBottom: 2, color: Color.main, lineHeight: 20 }}>{prop?.location}</Text>
                      </View>
                   </View>
-               )) : null}
-         </ScrollView>
+               )) : null} */}
+         {/* </ScrollView> */}
       </View>
    )
 }

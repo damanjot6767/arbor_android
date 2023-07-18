@@ -1,9 +1,11 @@
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { getReport } from '../../actions/report';
 import { Color } from '../../constants/colors';
+import { ListItem } from '../../common/list';
+
 export default function Report({ navigation }) {
   const dispatch = useDispatch()
   const [selectedText, setSelectedText] = useState('Text 1');
@@ -40,10 +42,17 @@ export default function Report({ navigation }) {
         </TouchableOpacity>
 
       </View>
-      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* List of items */}
-        {allReports?.data?.length ? allReports?.data?.map((row) => (
-          <View key={row?._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6 }}>
+      {/* <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}> */}
+      {/* List of items */}
+      <FlatList
+        data={allReports?.data}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => <ListItem item={item} label="reports" />}
+      />
+      {/* {allReports?.data?.length ? allReports?.data?.map((row) => (
+          <View key={row?._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6, margin:3 }}>
             <View style={{ padding: 15, backgroundColor: Color.white, width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: 15 }}>
               <View>
                 <Text style={{ fontSize: 18, marginBottom: 2, color: Color.main, fontWeight: 'bold' }}>{row?.reportName}</Text>
@@ -56,11 +65,13 @@ export default function Report({ navigation }) {
               </View>
             </View>
           </View>
-        )) : null}
-      </ScrollView>
+        )) : null} */}
+      {/* </ScrollView> */}
     </View>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   conatiner1: {

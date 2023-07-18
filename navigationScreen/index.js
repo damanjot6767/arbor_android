@@ -13,13 +13,12 @@ const Stack = createNativeStackNavigator();
 const MyStack = () => {
     
     const { isLoggedIn } = useSelector(({ arboristLogin }) => arboristLogin)
-    console.log("isLoggedIN", isLoggedIn)
     const theme = useMemo(() => ({
         ...DefaultTheme,
         colors: {
             ...DefaultTheme.colors,
             background: '#ECF4F3',
-            text: '#171717',
+            text: 'lightgray',
             border: '#D9D9D9',
             primary: '#FFFFFF'
         },

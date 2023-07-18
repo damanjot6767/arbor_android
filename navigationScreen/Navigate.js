@@ -11,6 +11,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AddClient from '../component/clients/addClient';
 import Map from "../common/map"
 import EditProfile from '../component/profile/editProfile';
+import { Color } from '../constants/colors';
+
 const LazyTabComponent = React.lazy(() => import('./TabsNavigate'));
 const LazyReportComponent = React.lazy(() => import('../component/reports'));
 
@@ -42,11 +44,14 @@ export default function Navigate() {
 
   return (
     <Stack.Navigator
-      screenOptions={{
-        headerTitleAlign: 'center',
-        headerStyle: { backgroundColor: '#ECF4F3', borderBottomWidth: 1 },
-        animationEnabled: false,
-      }}>
+    screenOptions={{
+      headerTitleAlign: 'center',
+      headerStyle: { backgroundColor: '#ECF4F3', borderBottomWidth: 1 },
+      headerTitleStyle: {
+        color: Color.main,
+      },
+      animationEnabled: false,
+    }}>
       <Stack.Screen
         name="TabsStack"
         component={TabWrapper}

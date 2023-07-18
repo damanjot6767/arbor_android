@@ -14,12 +14,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Profile from '../component/profile';
+import { persistor } from '../store';
 
 const TabsStack = createBottomTabNavigator();
 export default function TabsNavigate() {
 
   const dispatch = useDispatch()
-  const handleLogout =()=>{
+  const handleLogout = () => {
     Alert.alert(
       'ArborHawk',
       'Are you sure want to logout?',
@@ -31,7 +32,10 @@ export default function TabsNavigate() {
         },
         {
           text: 'Yes',
-          onPress: () => dispatch(arboristLogout()),
+          onPress: () => {
+            dispatch(arboristLogout())
+            persistor.purge();
+          },
         },
       ],
       { cancelable: false }
@@ -44,12 +48,15 @@ export default function TabsNavigate() {
       screenOptions={{
         headerTitleAlign: 'center',
         tabBarStyle: {
-          backgroundColor: '#1D4840',
+          backgroundColor: Color.main,
           height: 60,
           paddingBottom: 7,
           paddingTop: 10,
         },
         headerStyle: { backgroundColor: '#ECF4F3', borderBottomWidth: 1 },
+        headerTitleStyle: {
+          color: Color.main,
+        },
       }}>
       <TabsStack.Screen
         name="Home"
@@ -93,23 +100,23 @@ export default function TabsNavigate() {
           ),
         })}
       />
-      
+
       <TabsStack.Screen
         name="Profile"
         component={Profile}
         options={({ navigation }) => ({
           headerLeft: () => (
             <Button
-              onPress={()=>handleLogout()}
+              onPress={() => handleLogout()}
               textColor='red'
               labelStyle={{ fontSize: 16 }}
             >
               Logout
-          </Button>
+            </Button>
           ),
           headerRight: () => (
             <TouchableOpacity
-              style={{marginRight: 16}}
+              style={{ marginRight: 16 }}
               onPress={() => navigation.navigate('Edit Profile')}>
               <Icon name="edit" size={24} color="black" />
             </TouchableOpacity>
@@ -117,8 +124,8 @@ export default function TabsNavigate() {
           tabBarIcon(props) {
             return <Icon name="person" {...props} size={30} />;
           },
-      })}
-      
+        })}
+
       />
     </TabsStack.Navigator>
   );
