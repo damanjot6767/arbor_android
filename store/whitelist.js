@@ -1,0 +1,1 @@
+export default ['arboristLogin', 'client', 'property', 'report']
