@@ -35,7 +35,7 @@ const data = [
 export default function Profile() {
   const dispatch = useDispatch()
   const { arbor } = useSelector(({ arboristLogin }) => arboristLogin)
-  console.log("arbor", arbor)
+ 
 
   useEffect(() => {
     dispatch(getProfile())
