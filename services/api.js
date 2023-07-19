@@ -32,6 +32,7 @@ export const fetchArboristProfile = () => API.get("arborist/profile")
 
 export const fetchAllClients = () => API.get("arborist/clients")
 
+
 //------------------------------------------------------------------------------------------------------Properties
 
 export const fetchProperties = () => API.get("arborist/properties")
@@ -41,4 +42,9 @@ export const fetchProperties = () => API.get("arborist/properties")
 export const fetchReports = (req) => API.get(`arborist/reports`, {
   params: req
 });
+
+//-------------------------------------------------------------------------------------------------------Tree
+export const fetchHealthRates = () => API.get("arborist/healthrates")
+export const fetchJurisdiction = () => API.get("arborist/jurisdictions")
+export const fetchRecomendations = () => API.get("arborist/recommendations")
 

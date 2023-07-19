@@ -14,6 +14,7 @@ import Map from "../common/map"
 import EditProfile from '../component/profile/editProfile';
 import { Color } from '../constants/colors';
 import MultiStepForm from '../component/reports/addReport';
+import MapContainer from '../common/mapContainer';
 
 const LazyTabComponent = React.lazy(() => import('./TabsNavigate'));
 const LazyReportComponent = React.lazy(() => import('../component/reports'));
@@ -90,6 +91,10 @@ export default function Navigate() {
             </Button>
           ),
         })}
+      />
+      <Stack.Screen
+        name="Map"
+        component={MapContainer}
       />
       <Stack.Screen
         name="Edit Profile"
