@@ -51,5 +51,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+    <string>Your location is required for finding nearby places.</string>
+    <key>GMSApiKey</key>
+    <string>AIzaSyAKQHnip2EA2qYh6hSW3cW4q_ruWawMAhY</string>
 </dict>
 </plist>

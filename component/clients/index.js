@@ -10,7 +10,7 @@ import { ActivityIndicator } from 'react-native-paper';
 export default function Client() {
    const dispatch = useDispatch()
    const { clients, loader} = useSelector(({ client }) => client)
-   console.log("clients", clients?.map((client) => client.clientName))
+  
    useEffect(() => {
       dispatch(fetchClients())
    }, [])
@@ -34,19 +34,8 @@ export default function Client() {
             showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false}
             keyExtractor={(item) => item._id}
-            renderItem={({ item }) => <ListItem item={item} label="clients" />}
+            renderItem={({ item }) => <ListItem item={item} label="clients"/>}
          />}
-         {/* {clients?.length ?
-            clients?.map((client) => (
-               <View key={client._id} style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', gap: 6, margin: 3 }}>
-                  <View style={{ padding: 15, backgroundColor: Color.white, width: '100%', flexDirection: '1', borderRadius: 15 }}>
-                     <Text style={{ fontSize: 18, marginBottom: 2, color: Color.main, fontWeight: 'bold' }}>{client.clientName}</Text>
-                     <Text style={{ fontSize: 16, marginBottom: 2, color: Color.main, lineHeight: 20 }}>{client.address}</Text>
-                  </View>
-               </View>
-            )) : null} */}
-
-         {/* </ScrollView> */}
       </View>
    );
 }

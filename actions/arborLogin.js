@@ -4,7 +4,8 @@ import {
   arboristsLogin,
   forgotPassword,
   generatePassCode,
-  fetchArboristProfile
+  fetchArboristProfile,
+  editArboristProfile
 } from "../services/api"
 import { Alert } from "react-native";
 import { ErrorAlert } from "../common/alert";
@@ -96,6 +97,30 @@ export const getProfile = () => async (dispatch, getState) => {
       dispatch({ type: ACTION_TYPES.FETCH_ARBOR_PROFILE_REQUEST })
       const { data } = await fetchArboristProfile()
       dispatch({ type: ACTION_TYPES.FETCH_ARBOR_PROFILE_SUCCESS, payload: data.data })
+  }
+  catch (err) {
+      console.log(err);
+      dispatch({ type: ACTION_TYPES.FETCH_ARBOR_PROFILE_FAILED })
+      ErrorAlert(err)    
+      if(err.response.data.error==="Session Expired"){
+          dispatch(arboristLogout())
+      }
+  }
+}
+
+export const editArborProfile = (res, navigation) => async (dispatch, getState) => {
+
+  try {
+      dispatch({ type: ACTION_TYPES.EDIT_ARBOR_PROFILE_REQUEST })
+      if (res?.email) {
+          res.email = res.email.toLowerCase()
+      }
+      const { data } = await editArboristProfile(res)
+      dispatch({ type: ACTION_TYPES.EDIT_ARBOR_PROFILE_SUCCESS, payload: data.data })
+      dispatch(getProfile())
+      if (data.status === "success") {
+          navigation.navigate("Profile")
+      }
   }
   catch (err) {
       console.log(err);

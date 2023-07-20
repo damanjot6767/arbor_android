@@ -43,6 +43,13 @@ export const arboristLogin = (state = initialState, action) => {
             return { ...state, arbor: action.payload, loader: false }
         case ACTION_TYPES.FETCH_ARBOR_PROFILE_FAILED:
             return { ...state, loader: false }
+
+        case ACTION_TYPES.EDIT_ARBOR_PROFILE_REQUEST:
+            return { ...state, loader: true, arbor: {} }
+        case ACTION_TYPES.EDIT_ARBOR_PROFILE_SUCCESS:
+            return { ...state, arbor: action.payload, loader: false }
+        case ACTION_TYPES.EDIT_ARBOR_PROFILE_FAILED:
+            return { ...state, loader: false }
         default:
             return state
     }

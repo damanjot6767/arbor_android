@@ -27,10 +27,14 @@ export const arboristsLogin = (data) => axios.post("http://3.14.140.178/arborist
 export const generatePassCode = (data) => axios.post("http://3.14.140.178/arborist/forgotpasswordgeneratecode", data)
 export const forgotPassword = (data) => axios.post("http://3.14.140.178/arborist/forgotpassword", data)
 export const fetchArboristProfile = () => API.get("arborist/profile")
-
+export const editArboristProfile = (data) => API.put("arborist/profile", data)
 //------------------------------------------------------------------------------------------------------Clients
 
 export const fetchAllClients = () => API.get("arborist/clients")
+export const fetchClientTypes = () => API.get("arborist/clienttypes")
+export const addArboristClient = (data) => API.post("arborist/client", data)
+export const editClient = (clientId, data) => API.put(`arborist/client/${clientId}`, data)
+export const deleteClient = (clientId) => API.delete(`arborist/client/${clientId}`)
 
 //------------------------------------------------------------------------------------------------------Properties
 

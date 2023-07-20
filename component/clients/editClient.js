@@ -16,29 +16,27 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, TextInput } from "react-native-paper";
 import { SelectList } from "react-native-dropdown-select-list";
 import { useDispatch, useSelector } from "react-redux";
-import { addClient, fetchClientType } from "../../actions/client";
+import { editClientData, fetchClientType } from "../../actions/client";
 import formValidation from "../../common/validations/validation";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const CHILD_WIDTH = SCREEN_WIDTH * 1.05;
 
-export default function AddClient({ navigation }) {
-  const GOOGLE_PLACES_API_KEY = "AIzaSyAKQHnip2EA2qYh6hSW3cW4q_ruWawMAhY";
-  const { clientTypes } = useSelector(({ client }) => client);
+export default function EditClient({ navigation }) {
+  const { clientTypes, client } = useSelector(({ client }) => client);
   const [clientType, setClientType] = useState([]);
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editIndex, setEditIndex] = useState("");
   const [clientData, setClientData] = useState({
-    clientName: "",
-    address: "",
-    clientType: "",
-    clientLat: "",
-    clientLong: "",
-    contacts: [],
+    clientName: client?.clientName ? client.clientName : "",
+    address: client?.address ? client?.address : "",
+    clientType: client?.clientType?._id ? client?.clientType?._id : "",
+    clientLat: client?.clientLocation?.coordinates[1],
+    clientLong: client?.clientLocation?.coordinates[0],
+    contacts: client?.contacts?.length > 0 ? client?.contacts : [],
   });
   const [contactDetails, setContactDetails] = useState({
     name: "",
@@ -96,18 +94,12 @@ export default function AddClient({ navigation }) {
 
   const handleSubmit = () => {
     console.log("client", clientData);
-    const validationError = formValidation(clientData, "addClient");
-    validationError
-      ? Alert.alert("Error", validationError)
-      : dispatch(addClient(clientData, navigation));
+    // const validationError = formValidation(clientData,"addClient");
+    // validationError
+    //   ? Alert.alert("Error", validationError)
+    //   : dispatch(editClient(clientData, navigation));
+    dispatch(editClientData(clientData, navigation));
   };
-
-  const renderSuggestions = ({ item }) => (
-    <View style={styles.suggestionItem}>
-      <Text>{item.description}</Text>
-    </View>
-  );
-
   useEffect(() => {
     dispatch(fetchClientType());
   }, []);
@@ -122,7 +114,10 @@ export default function AddClient({ navigation }) {
   }, [clientTypes?.length]);
 
   return (
-    <SafeAreaView style={styles.safeAreaStyle}>
+    <SafeAreaView
+      style={styles.safeAreaStyle}
+      showsVerticalScrollIndicator={false}
+    >
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.profileDetail}>
@@ -294,18 +289,6 @@ export default function AddClient({ navigation }) {
                 + Add contact
               </Text>
             </View>
-            <GooglePlacesAutocomplete
-              placeholder="Search"
-              onPress={(data, details ) => {
-                // 'details' is provided when fetchDetails = true
-                console.log(data, details);
-              }}
-              query={{
-                key: GOOGLE_PLACES_API_KEY,
-                language: "en",
-              }}
-              fetchDetails={true}
-            />
 
             <Button
               mode="contained"
@@ -499,11 +482,5 @@ const styles = StyleSheet.create({
   phoneNumberStyle: {
     flexDirection: "row",
     gap: 7,
-  },
-  suggestionItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
   },
 });

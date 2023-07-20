@@ -12,25 +12,6 @@ import GlobalStyles from "../../common/globalStyles";
 import { getProfile } from "../../actions/arborLogin"
 import { useDispatch, useSelector } from "react-redux";
 
-const arbor = {
-  firstName: "rajni",
-  lastName: "bala",
-  email: "123@yopmail.com",
-  profileImage: "ok done",
-  phoneNumber: "1234567899",
-  countryCode: "+91",
-  experience: "20",
-  projectsCompleted: "10",
-  bio: "okkk",
-  address: "njkshksjak",
-  isaNumber: "nmkdsjks",
-};
-
-const data = [
-  { id: 1, title: "Item 1", link: "https://example.com" },
-  { id: 2, title: "Item 2", link: "https://example.com" },
-  { id: 3, title: "Item 3", link: "https://example.com" },
-];
 
 export default function Profile() {
   const dispatch = useDispatch()
@@ -41,28 +22,28 @@ export default function Profile() {
     dispatch(getProfile())
   }, [])
 
-  const [profile, setProfile] = useState({
-    firstName: arbor?.firstName ? arbor.firstName : "",
-    lastName: arbor?.lastName ? arbor.lastName : "",
-    email: arbor?.email ? arbor.email : "",
-    profileImage: arbor?.profileImage ? arbor.profileImage : "",
-    phoneNumber: arbor?.phoneNumber ? arbor?.phoneNumber : "",
-    countryCode: arbor?.countryCode ? arbor.countryCode : "",
-    experience: arbor?.experience ? arbor?.experience : "",
-    projectsCompleted: arbor?.projectsCompleted ? arbor.projectsCompleted : "",
-    bio: arbor?.bio ? arbor?.bio : "",
-    address: arbor?.address ? arbor.address : "",
-    isaNumber: arbor?.isaNumber ? arbor.isaNumber : "",
-    accreditation: arbor?.accreditation ? arbor?.accreditation : [],
-    links: arbor?.links ? arbor.links : [],
-    linkName: arbor?.linkName ? arbor.linkName : "",
-    link: arbor?.link ? arbor.link : "",
-    signatureImage: arbor?.signatureImage ? arbor.signatureImage : ""
-  });
+  // const [profile, setProfile] = useState({
+  //   firstName: arbor?.firstName ? arbor.firstName : "",
+  //   lastName: arbor?.lastName ? arbor.lastName : "",
+  //   email: arbor?.email ? arbor.email : "",
+  //   profileImage: arbor?.profileImage ? arbor.profileImage : "",
+  //   phoneNumber: arbor?.phoneNumber ? arbor?.phoneNumber : "",
+  //   countryCode: arbor?.countryCode ? arbor.countryCode : "",
+  //   experience: arbor?.experience ? arbor?.experience : "",
+  //   projectsCompleted: arbor?.projectsCompleted ? arbor.projectsCompleted : "",
+  //   bio: arbor?.bio ? arbor?.bio : "",
+  //   address: arbor?.address ? arbor.address : "",
+  //   isaNumber: arbor?.isaNumber ? arbor.isaNumber : "",
+  //   accreditations: arbor?.accreditations ? arbor?.accreditations : [],
+  //   links: arbor?.links ? arbor.links : [],
+  //   linkName: arbor?.linkName ? arbor.linkName : "",
+  //   link: arbor?.link ? arbor.link : "",
+  //   signatureImage: arbor?.signatureImage ? arbor?.signatureImage : ""
+  // });
 
   const [expYear, setExpYear] = useState("")
   useEffect(() => {
-    const data = new Date(profile?.experience)
+    const data = new Date(arbor?.experience)
     countExperience(data)
   }, [])
 
@@ -77,111 +58,120 @@ export default function Profile() {
   }
 
 
-const handleLinkPress = (link) => {
-  Linking.openURL(link);
-};
+  const handleLinkPress = (link) => {
+    Linking.openURL(link);
+  };
 
-return (
-  <ScrollView showsVerticalScrollIndicator={false}>
-    <View style={styles.container}>
-      <View style={styles.profileLogo}>
-        {
-          arbor?.profileImage ?
-            <Image
-              source={{ uri: arbor?.profileImage ? arbor?.profileImage : "" }}
-              style={styles.imageStyle}
-            /> :
-            <Image
-              source={arbor?.profileImage ? arbor?.profileImage : require("../../assets/images/userAv.png")}
-              style={styles.imageStyle}
-            />
-        }
-        <Text style={styles.textStyle}>{profile?.firstName}</Text>
-      </View>
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
+        <View style={styles.profileLogo}>
+          {
+            arbor?.profileImage ?
+              <Image
+                source={{ uri: arbor?.profileImage ? arbor?.profileImage : "" }}
+                style={styles.imageStyle}
+              /> :
+              <Image
+                source={arbor?.profileImage ? arbor?.profileImage : require("../../assets/images/userAv.png")}
+                style={styles.imageStyle}
+              />
+          }
+          <Text style={styles.textStyle}>{arbor?.firstName}</Text>
+        </View>
 
-      <View style={styles.profileDetail}>
-        <View style={{ gap: 2 }}>
-          <Text style={GlobalStyles.defaultText}>EMAIL</Text>
-          <Text style={styles.textStyle}>{profile?.email}</Text>
-        </View>
-        <View style={{ gap: 2 }}>
-          <Text style={GlobalStyles.defaultText}>PHONE NUMBER</Text>
-          <Text style={styles.textStyle}>{`${profile?.countryCode} ${profile?.phoneNumber}`}</Text>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            gap: 30,
-          }}
-        >
+        <View style={styles.profileDetail}>
           <View style={{ gap: 2 }}>
-            <Text style={GlobalStyles.defaultText}>PROJECTS COMPLETED</Text>
-            <Text style={styles.textStyle}>{profile?.projectsCompleted}</Text>
+            <Text style={GlobalStyles.defaultText}>EMAIL</Text>
+            <Text style={styles.textStyle}>{arbor?.email}</Text>
           </View>
           <View style={{ gap: 2 }}>
-            <Text style={GlobalStyles.defaultText}>EXPERIENCE</Text>
-            <Text style={styles.textStyle}>{expYear}</Text>
+            <Text style={GlobalStyles.defaultText}>PHONE NUMBER</Text>
+            <Text style={styles.textStyle}>{`${arbor?.countryCode} ${arbor?.phoneNumber}`}</Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              gap: 30,
+            }}
+          >
+            <View style={{ gap: 2 }}>
+              <Text style={GlobalStyles.defaultText}>PROJECTS COMPLETED</Text>
+              <Text style={styles.textStyle}>{arbor?.projectsCompleted}</Text>
+            </View>
+            <View style={{ gap: 2 }}>
+              <Text style={GlobalStyles.defaultText}>EXPERIENCE</Text>
+              <Text style={styles.textStyle}>{expYear}</Text>
+            </View>
+          </View>
+          <View style={{ gap: 2 }}>
+            <Text style={GlobalStyles.defaultText}>ISA NUMBER</Text>
+            <Text style={styles.textStyle}>{arbor?.isaNumber}</Text>
+          </View>
+          <View style={{ gap: 2 }}>
+            <Text style={GlobalStyles.defaultText}>BIO</Text>
+            <Text style={styles.textStyle}>{arbor?.bio}</Text>
+          </View>
+          <View style={{ gap: 2 }}>
+            <Text style={GlobalStyles.defaultText}>ADDRESS</Text>
+            <Text style={styles.textStyle}>{arbor?.address}</Text>
+          </View>
+          <View style={{ gap: arbor?.accreditations?.length > 0 ? 8 : 2 }}>
+            <Text style={GlobalStyles.defaultText}>ACCEREDITATION</Text>
+            {arbor?.accreditations?.length > 0 ? (
+              arbor?.accreditations?.map((item) => (
+                <View key={item._id} style={styles.cardItemStyle}>
+                  <Text style={styles.textStyle}>{item.accreditation}</Text>
+                  {/* <TouchableOpacity onPress={() => handleLinkPress(item.accreditationReference)}> */}
+                  <Text style={{ color: "blue" }}>{item.accreditationReference}</Text>
+                  {/* </TouchableOpacity> */}
+                </View>
+              ))
+            ) : (
+              <Text style={styles.textStyle}>Not exist</Text>
+            )}
+          </View>
+
+          <View style={{ gap: arbor?.links?.length > 0 ? 8 : 2 }}>
+            <Text style={GlobalStyles.defaultText}>SOCIAL LINK</Text>
+            {arbor?.links?.length > 0 ? (
+              arbor?.links?.map((item) => (
+                <View key={item._id} style={styles.cardItemStyle}>
+                  <Text style={styles.textStyle}>{item.linkName}</Text>
+                  <TouchableOpacity onPress={() => handleLinkPress(item.link)}>
+                    <Text style={{ color: "blue" }}>{item.link}</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.textStyle}>Not exist</Text>
+            )}
+          </View>
+
+          <View style={{ gap: 2 }}>
+            <Text style={GlobalStyles.defaultText}>SIGNATURE</Text>
+            {arbor?.signatureImage ?
+              <Image
+                source={{ uri: arbor?.signatureImage ? arbor.signatureImage : "" }}
+                style={styles.sigNatureStyle}
+              /> :
+              <Image
+                source={arbor?.profileImage ? arbor?.profileImage : require("../../assets/images/userAv.png")}
+                style={styles.imageStyle}
+              />
+            }
           </View>
         </View>
-        <View style={{ gap: 2 }}>
-          <Text style={GlobalStyles.defaultText}>ISA NUMBER</Text>
-          <Text style={styles.textStyle}>{profile?.isaNumber}</Text>
-        </View>
-        <View style={{ gap: 2 }}>
-          <Text style={GlobalStyles.defaultText}>BIO</Text>
-          <Text style={styles.textStyle}>{profile?.bio}</Text>
-        </View>
-        <View style={{ gap: 2 }}>
-          <Text style={GlobalStyles.defaultText}>ADDRESS</Text>
-          <Text style={styles.textStyle}>{profile?.address}</Text>
-        </View>
-        <View style={{ gap: profile?.accreditation?.length > 0 ? 8 : 2 }}>
-          <Text style={GlobalStyles.defaultText}>ACCEREDITATION</Text>
-          {profile?.accreditation?.length > 0 ? (
-            profile?.accreditation?.map((item) => (
-              <View key={item._id} style={styles.cardItemStyle}>
-                <Text style={styles.textStyle}>{item.title}</Text>
-                <TouchableOpacity onPress={() => handleLinkPress(item.link)}>
-                  <Text style={{ color: "blue" }}>{item.link}</Text>
-                </TouchableOpacity>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.textStyle}>Not exist</Text>
-          )}
-        </View>
-        <View style={{ gap: profile?.links?.length > 0 ? 8 : 2 }}>
-          <Text style={GlobalStyles.defaultText}>SOCIAL LINK</Text>
-          {profile?.links?.length > 0 ? (
-            profile?.links?.map((item) => (
-              <View key={item._id} style={styles.cardItemStyle}>
-                <Text style={styles.textStyle}>{item.linkName}</Text>
-                <TouchableOpacity onPress={() => handleLinkPress(item.link)}>
-                  <Text style={{ color: "blue" }}>{item.link}</Text>
-                </TouchableOpacity>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.textStyle}>Not exist</Text>
-          )}
-        </View>
-        <View style={{ gap: 2 }}>
-          <Text style={GlobalStyles.defaultText}>SIGNATURE</Text>
-          <Image
-            source={require("../../assets/images/userAv.png")}
-            style={styles.sigNatureStyle}
-          />
-        </View>
       </View>
-    </View>
-  </ScrollView>
-);
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    margin: 5,
     paddingHorizontal: 12,
   },
   profileLogo: {
@@ -212,8 +202,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   sigNatureStyle: {
-    width: "100%",
-    height: 125,
+    width: null,
+    resizeMode: 'contain',
+    height: 100,
     borderRadius: 10,
   },
+
 });
