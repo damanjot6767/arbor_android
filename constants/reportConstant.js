@@ -1,8 +1,5 @@
 export const DATA = [
-    {
-        id: 1,
-        title: "abc"
-    },
+    
 
 ]
 export const dbh = [
@@ -11,7 +8,7 @@ export const dbh = [
 ]
 export const height = [
     'ft',
-    'meter'
+    'm'
 ]
 export const hardScapeDamage = ['yes', 'no', 'potential']
 export const level = [

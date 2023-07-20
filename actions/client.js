@@ -39,7 +39,6 @@ export const fetchClients = () => async (dispatch, getState) => {
     try {
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_REQUEST })
         const { data } = await fetchAllClients()
-        console.log("data", data)
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_SUCCESS, payload: data.data })
     }
     catch (err) {

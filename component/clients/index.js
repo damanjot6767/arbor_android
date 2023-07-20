@@ -10,7 +10,6 @@ import { ActivityIndicator } from 'react-native-paper';
 export default function Client() {
    const dispatch = useDispatch()
    const { clients, loader} = useSelector(({ client }) => client)
-   console.log("clients", clients?.map((client) => client.clientName))
    useEffect(() => {
       dispatch(fetchClients())
    }, [])

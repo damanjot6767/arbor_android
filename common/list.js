@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native"
 import { Color } from "../constants/colors"
 export const ListItem = ({ item, label }) => {
+
     return (
         <>
             {label === "reports" &&

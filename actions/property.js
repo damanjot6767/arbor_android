@@ -1,6 +1,7 @@
 import { ACTION_TYPES } from "../constants/actionTypes";
 import {
     fetchProperties,
+    fetchClientProperty
 } from "../services/api";
 import { ErrorAlert } from "../common/alert";
 
@@ -26,7 +27,6 @@ export const fetchAllProperties = () => async (dispatch, getState) => {
     try {
         dispatch({ type: ACTION_TYPES.FETCH_PROPERTY_REQUEST })
         const { data } = await fetchProperties()
-        console.log("data", data)
         dispatch({ type: ACTION_TYPES.FETCH_PROPERTY_SUCCESS, payload: data.data })
     }
     catch (err) {

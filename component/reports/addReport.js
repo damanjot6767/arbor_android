@@ -2,49 +2,439 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, FlatList, ScrollView, Dimensions, Pressable } from 'react-native';
 import { Card, TextInput, Button, RadioButton } from 'react-native-paper';
 import { Color } from '../../constants/colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import MapContainer from '../../common/mapContainer';
-import SegmentedControl from '../../common/segments';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchHealthRate, fetchRecomendation, getJurisdiction } from '../../actions/tree';
-import { fetchClients } from '../../actions/client';
-import { SelectList } from 'react-native-dropdown-select-list';
-import {DATA, heritageTree, hardScapeDamage, treeDistance, level, steps, dbh, height, secondaryReport, diseasePresent} from "../../constants/reportConstant"
+import { addReport, updateReport } from '../../actions/report';
+import { steps } from '../../constants/reportConstant';
+import {
+    ReportName, Client, Property, Objective, AddTree, TreeImage, Species,
+    TreeHeight, HealthRate, HardScapeDamage, InspectionLevel, TreeDistance, HeritageTree, Jurisdiction, SecondaryReport, Recomendation,
+    DiseasePresent, Observations
+} from "./reportSteps";
+import { addTree, editTree as editTrees } from '../../actions/tree';
+import styles from './reportStyle/style';
+import { ReportErrorAlert } from './alert';
+import { report } from '../../reducers/report';
 
-
-const MultiStepForm = ({ navigation }) => {
+const AddReport = ({ navigation }) => {
     const dispatch = useDispatch()
     const [step, setStep] = useState(1);
-    const [show, setShow] = useState(false)
-    const [selected, setSelected] = useState("")
-    const [clientData, setClientData] = useState(null)
-    const [value, setValue] = useState(null);
+    const [status, setStatus] = useState('draft')
+    const { reports } = useSelector(({ report }) => report)
+    const { trees, editTree } = useSelector(({ tree }) => tree)
+    console.log("reports", reports)
+    const [reportData, setReportData] = useState({
+        reportName: '',
+        client: '',
+        property:  '',
+        objective : "The Objective of this report is",
+        treeLat: "",
+        treeLong: "",
+        treeAddress: "",
+        treeImage: [],
+        treeMapImage: "",
+        species: "",
+        treeDBHUnit: "",
+        treeDBH: "",
+        treeHeight: "",
+        treeHeightUnit: "",
+        healthRating: "",
+        hardscapedamage: "",
+        hardScapeDamageImage: "",
+        hardScapeDamageImageCaption: "",
+        damageReason: "",
+        level: "",
+        treeDistance: "",
+        treeDistanceDesc: "",
+        treeDistanceImage: "",
+        treeDistanceImageCaption: "",
+        heritageTree: "",
+        heritageDesc: "",
+        heritageImage: "",
+        heritageImageCaption: "",
+        observations: "My Observation for this tree is",
+        secondaryReport: "",
+        jurisdiction: "",
+        diseasePresent: "",
+        diseasePresentDesc: "",
+        diseasePresentImage: "",
+        diseasePresentImageCaption: "",
+        recomendations: "",
 
-    const [formData, setFormData] = useState({
-        name: '',
-        age: '',
-        dateOfBirth: '',
     });
 
-    useEffect(() => {
-        dispatch(fetchClients())
-        dispatch(fetchHealthRate())
-        dispatch(getJurisdiction())
-        dispatch(fetchRecomendation())
-    }, [])
+    console.log("reportData", reportData);
 
-    useEffect(() => {
-        let newArray = clients.map((item) => {
-            return { key: item._id, value: item.clientName }
-        })
-        setClientData(newArray)
-    }, [])
-    const { clients } = useSelector(({ client }) => client)
-    const { healthRate, jurisdiction, recomendations } = useSelector(({ tree }) => tree)
-
+    const handleStatus = () => {
+        if (reportData.reportName && reportData.client && reportData.property && reportData.objective &&
+            reportData.treeLat && reportData.treeLong && reportData.level && reportData.healthRating &&
+            reportData.observations && reportData.recomendations?.length > 0 && reportData.treeAddress &&
+            reportData.hardscapedamage && reportData.treeDistance !== null && reportData.treeMapImage &&
+            reportData.treeImage?.length > 0 && reportData.treeHeight && reportData.heritageTree !== null &&
+            reportData.secondaryReport !== null && reportData.jurisdiction
+            && reportData.diseasePresent !== null) {
+            setStatus("completed")
+        } else {
+            setStatus("draft")
+        }
+    }
     const handleNextStep = () => {
-        setStep((prevStep) => prevStep + 1);
-    };
+        const reportId = reports?._id
+        switch (step) {
+            case 1:
+                if (reportData?.reportName) {
+                    handleStatus()
+                    const data = {
+                        reportName: reportData.reportName ? reportData.reportName : "",
+                        pageNumber: step,
+                        status: status
+                    }
+                    setStep((prevStep) => prevStep + 1);
+
+                    reportId ? dispatch(updateReport(reportId, data)) :
+                        dispatch(addReport(data))
+                } else {
+                    ReportErrorAlert("Please enter report name")
+                }
+                break;
+            case 2:
+                if (reportData.client) {
+                    handleStatus()
+                    const data = {
+                        reportName: reportData.reportName ? reportData.reportName : "",
+                        client: reportData.client ? reportData.client?._id : "",
+                        property: "",
+                        pageNumber: step,
+                        status: status
+                    }
+                    setReportData({ ...reportData, property: "" })
+                    reportId ? dispatch(updateReport(reportId, data)) :
+                        dispatch(addReport(data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please Select Client ")
+                }
+
+                break;
+            case 3:
+                if (reportData.property) {
+                    handleStatus()
+                    const data = {
+                        pageNumber: step,
+                        property: reportData.property ? reportData.property?._id : "",
+                        status: status
+                    }
+                    reportId ? dispatch(updateReport(reportId, data)) :
+                        dispatch(addReport(data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please Select Property")
+                }
+                break;
+            case 4:
+                if (reportData.objective !== "" && reportData.objective !== undefined) {
+                    handleStatus()
+                    const data = {
+                        pageNumber: step,
+                        objective: reportData.objective ? reportData.objective : "",
+                        status: status
+                    }
+                    reportId ? dispatch(updateReport(reportId, data)) :
+                        dispatch(addReport(data))
+                    setStep((prevStep) => prevStep + 1);
+                }
+                break;
+            case 5:
+                if (reportData?.treeLat !== "" && reportData?.treeLong !== undefined) {
+                    handleStatus()
+                    const treeMap = {
+                        treeLat: reportData?.treeLat,
+                        treeLong: reportData?.treeLong,
+                        treeAddress: reportData?.treeAddress,
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, treeMap)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, treeMap)) :
+                        dispatch(addTree(reports?._id, treeMap))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please Select Tree Location")
+                }
+                break;
+            case 6:
+                // if (reportData.treeImage.length > 0) {
+                //     handleStatus()
+                //     const treesImages = {
+                //         treeImages: formik.values.treeImage
+                //     }
+                //     const page = {
+                //         pageNumber: activeStep,
+                //         status: status
+                //     }
+                //     dispatch(updateReport(reportId, page))
+                //     editClick ? dispatch(editTrees(editTree?.report, editTree?._id, treesImages)) :
+                //         trees?._id ? dispatch(editTrees(trees?.report, trees?._id, treesImages)) :
+                //             dispatch(addTree(reports?._id, treesImages))
+                setStep((prevStep) => prevStep + 1);
+
+                // }
+                break;
+            case 7:
+                if (reportData?.species) {
+                    handleStatus()
+                    let data
+                    // if (formik.values.commonName || formik.values.scientificName) {
+                    //     data = {
+                    //         otherSpeciesCommonName: formik.values.commonName,
+                    //         otherSpeciesScientificName: formik.values.scientificName,
+                    //         species: ""
+                    //     }
+                    // } else {
+                    data = {
+                        species: reportData.species?._id,
+                        otherSpeciesCommonName: "",
+                        otherSpeciesScientificName: "",
+                        // }
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please Select Species")
+                }
+
+                break;
+            case 8:
+                if (reportData?.treeHeight && reportData?.treeDBH) {
+                    handleStatus()
+                    const data = {
+                        treeDBH: reportData.treeDBH,
+                        treeDBHUnit: reportData.treeDBHUnit,
+                        treeHeight: reportData.treeHeight,
+                        treeHeightUnit: reportData.treeHeightUnit
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please Select Tree DBH and Height")
+                }
+                break;
+            case 9:
+                if (reportData?.healthRating) {
+                    handleStatus()
+                    const data = {
+                        healthRating: reportData.healthRating
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 10:
+                if (reportData.hardscapedamage !== "" && reportData.hardscapedamage !== null && reportData.hardscapedamage !== undefined) {
+                    handleStatus()
+                    const data = {
+                        hardScapeDamage: reportData.hardscapedamage,
+                        damageReason: reportData.damageReason ? reportData.damageReason : "",
+                        hardScapeDamageImage: reportData.hardScapeDamageImage ? reportData.hardScapeDamageImage : "",
+                        hardScapeDamageImageCaption: reportData.hardScapeDamageImageCaption ? reportData.hardScapeDamageImageCaption : ""
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 11:
+                if (reportData.level !== "" && reportData.level !== null && reportData.level !== undefined) {
+                    handleStatus()
+                    const data = {
+                        inspectionLevel: reportData.level
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                        trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                            dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 12:
+                if (reportData.treeDistance !== "" && reportData.treeDistance !== null && reportData.treeDistance !== undefined) {
+                    handleStatus()
+                    const data = {
+                        isTreeDistance: reportData.treeDistance,
+                        treeDistanceDesc: reportData.treeDistanceDesc ? reportData.treeDistanceDesc : "",
+                        treeDistanceImage: reportData.treeDistanceImage ? reportData.treeDistanceImage : "",
+                        treeDistanceImageCaption: reportData.treeDistanceImageCaption ? reportData.treeDistanceImageCaption : ""
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                        trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                            dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 13:
+                if (reportData.heritageTree !== "" && reportData.heritageTree !== null && reportData.heritageTree !== undefined) {
+                    handleStatus()
+                    const data = {
+                        isHeritageTree: reportData.heritageTree,
+                        heritageDesc: reportData.heritageDesc ? reportData.heritageDesc : "",
+                        heritageImage: reportData.heritageImage ? reportData.heritageImage : "",
+                        heritageImageCaption: reportData.heritageImageCaption ? reportData.heritageImageCaption : ""
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                        trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                            dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 14:
+                if (reportData.jurisdiction !== "" && reportData.jurisdiction !== undefined && reportData.jurisdiction !== null) {
+                    handleStatus()
+                    const data = {
+                        jurisdiction: reportData.jurisdiction
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 15:
+                if (reportData.diseasePresent !== "" && reportData.diseasePresent !== undefined && reportData.diseasePresent !== null) {
+                    handleStatus()
+                    const data = {
+                        diseasePresent: reportData.diseasePresent,
+                        diseasePresentDesc: reportData.diseasePresentDesc ? reportData.diseasePresentDesc : "",
+                        diseasePresentImage: reportData.diseasePresentImage ? reportData.diseasePresentImage : "",
+                        diseasePresentImageCaption: reportData.diseasePresentImageCaption ? reportData.diseasePresentImageCaption : ""
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 16:
+                if (reportData.observations !== "" && reportData.observations !== undefined) {
+                    handleStatus()
+                    const data = {
+                        observations: reportData.observations
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                        dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                }
+                break;
+            case 17:
+                if (reportData.secondaryReport !== "" && reportData.secondaryReport !== null && reportData.secondaryReport !== undefined) {
+                    handleStatus()
+                    const data = {
+                        isSecondaryReportRequired: reportData.secondaryReport
+                    }
+                    const page = {
+                        pageNumber: step,
+                        status: status
+                    }
+                    dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(e/ditTree?.report, editTree?._id, data)) :
+                        trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                            dispatch(addTree(reports?._id, data))
+                    setStep((prevStep) => prevStep + 1);
+                } else {
+                    ReportErrorAlert("Please select an option")
+                }
+                break;
+            case 18:
+                if (reportData?.recomendations) {
+                    // handleStatus()
+                    // const data = {
+                    //     recomendations: recomValues
+                    // }
+                    // const page = {
+                    //     pageNumber: step,
+                    //     status: status
+                    // }
+                    // dispatch(updateReport(reportId, page))
+                    // editClick ? dispatch(editTrees(editTree?.report, editTree?._id, data)) :
+                    //     trees?._id ? dispatch(editTrees(trees?.report, trees?._id, data)) :
+                    //         dispatch(addTree(reports?._id, data))
+                    // handleComplete()
+                }
+                break;
+        }
+    }
 
     const handlePreviousStep = () => {
         setStep((prevStep) => prevStep - 1);
@@ -55,423 +445,73 @@ const MultiStepForm = ({ navigation }) => {
         console.log(formData);
         // You can perform further actions like submitting the data to a server or saving it locally.
     };
-    const renderItem = ({ item }) => (
 
-        <Pressable onPress={() => setShow(true)}>
-            <View
-                style={styles.AddTree}>
-                <Icon style={{ borderRadius: 50, padding: 3, borderWidth: 1 }} name="add" size={24} color="black" />
-                <Text style={{ color: Color.main, margin: 15, fontSize: 14 }}>Add Tree</Text>
-            </View>
-        </Pressable>
-    );
-    const renderTreeImage = ({ item }) => (
-
-        <Pressable onPress={() => setShow(true)}>
-            <View
-                style={styles.AddTree}>
-                <Icon style={{ borderRadius: 50, padding: 3, borderWidth: 1 }} name="add" size={24} color="black" />
-                <Text style={{ color: Color.main, margin: 15, fontSize: 14 }}>Add Tree Image</Text>
-            </View>
-        </Pressable>
-    );
-    const renderOptions = (item) => {
-        if (step === 9) {
-            return (
-                <View key={item?._id}>
-                    <RadioButton.Item
-                        label={item.rating}
-                        value={item._id}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
+    const formContent = (step) => {
+        switch (step) {
+            case 1:
+                return <ReportName reportData={reportData} setReportData={setReportData} />;
+            case 2:
+                return <Client reportData={reportData} setReportData={setReportData} />;
+            case 3:
+                return <Property reportData={reportData} setReportData={setReportData} />;
+            case 4:
+                return <Objective reportData={reportData} setReportData={setReportData} />;
+            case 5:
+                return <AddTree reportData={reportData} setReportData={setReportData} />;
+            case 6:
+                return <TreeImage reportData={reportData} setReportData={setReportData} />;
+            case 7:
+                return <Species reportData={reportData} setReportData={setReportData} />;
+            case 8:
+                return <TreeHeight reportData={reportData} setReportData={setReportData} />;
+            case 9:
+                return <HealthRate reportData={reportData} setReportData={setReportData} />;
+            case 10:
+                return <HardScapeDamage reportData={reportData} setReportData={setReportData} />;
+            case 11:
+                return <InspectionLevel reportData={reportData} setReportData={setReportData} />;
+            case 12:
+                return <TreeDistance reportData={reportData} setReportData={setReportData} />;
+            case 13:
+                return <HeritageTree reportData={reportData} setReportData={setReportData} />;
+            case 14:
+                return <Jurisdiction reportData={reportData} setReportData={setReportData} />;
+            case 15:
+                return <DiseasePresent reportData={reportData} setReportData={setReportData} />;
+            case 16:
+                return <Observations reportData={reportData} setReportData={setReportData} />;
+            case 17:
+                return <SecondaryReport reportData={reportData} setReportData={setReportData} />;
+            case 18:
+                return <Recomendation reportData={reportData} setReportData={setReportData} />;
+            default:
+                return <View>404: Not Found</View>
         }
-        else if (step === 10) {
-            return (
-                <View key={item}>
-                    <RadioButton.Item
-                        label={item}
-                        value={item}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 11) {
-            return (
-                <View key={item}>
-                    <RadioButton.Item
-                        label={item}
-                        value={item}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 12) {
-            return (
-                <View key={item}>
-                    <RadioButton.Item
-                        label={item}
-                        value={item}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 13) {
-            return (
-                <View key={item}>
-                    <RadioButton.Item
-                        label={item}
-                        value={item}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 14) {
-            return (
-                <View key={item?._id}>
-                    <RadioButton.Item
-                        label={item?.jurisdiction}
-                        value={item?._id}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 15) {
-            return (
-                <View key={item}>
-                    <RadioButton.Item
-                        label={item}
-                        value={item}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 17) {
-            return (
-                <View key={item}>
-                    <RadioButton.Item
-                        label={item}
-                        value={item}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-        else if (step === 18) {
-            return (
-                <View key={item?._id}>
-                    <RadioButton.Item
-                        label={item?.recomendation}
-                        value={item?._id}
-                        color="black"
-                        labelStyle={{
-                            color: 'black'
-                        }}
-                    />
-                </View>
-            );
-        }
-
-
     };
-    
     return (
         <SafeAreaView style={styles.safeAreaStyle}>
             <View style={styles.progressContainer}>
                 <View style={[styles.progressBar, { width: `${(step) * 5.55}%` }]} />
             </View>
             <View style={styles.container}>
-                {step === 1 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Please name your report</Text>
-                                <TextInput
-                                    label="Report Name"
-                                    mode="flat"
-                                    // style={{ }}
-                                    theme={{ colors: { primary: Color.gray, outline: Color.gray } }}
-                                    style={{ backgroundColor: "transparent", fontSize: 16, paddingHorizontal: 0 }}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    textColor={Color.black}
-                                />
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 2 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Please select a client</Text>
-                                <SelectList
-                                    setSelected={setSelected}
-                                    data={clientData}
-                                    boxStyles={{
-                                        borderRadius: 0,
-                                        marginTop: 10,
-                                        borderTopWidth: 0,
-                                        borderLeftWidth: 0,
-                                        borderRightWidth: 0,
-                                        paddingHorizontal: 0,
-                                        borderBottomColor: Color.gray,
-                                    }}
-                                    inputStyles={{ color: Color.gray, fontSize: 16, padding: 0 }}
-                                    placeholder="Select Client Type"
-                                    dropdownStyles={{ paddingHorizontal: 10, borderWidth: 0 }}
-                                    dropdownItemStyles={{
-                                        height: 50,
-                                        paddingHorizontal:0,
-                                        justifyContent: 'center',
-                                        borderBottomWidth: 0.8,
-                                        borderColor: '#8e8e8e',
-                                    }}
-                                />
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 3 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Please Select a property</Text>
-                                <TextInput
-                                    label="Property Name"
-                                    mode="flat"
-                                    theme={{ colors: { primary: Color.gray, outline: Color.gray } }}
-                                    style={{ backgroundColor: "transparent", fontSize: 16, paddingHorizontal: 0 }}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    textColor={Color.black}
-                                />
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 4 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>What is the objective of this report?</Text>
-                                <TextInput
-                                    label="Objective"
-                                    mode="flat"
-                                    multiline
-                                    theme={{ colors: { primary: Color.gray, outline: Color.gray } }}
-                                    style={{ backgroundColor: "transparent", fontSize: 16, paddingHorizontal: 0 }}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    textColor={Color.black}
-                                />
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 5 && (
-                    <View style={styles.stepContainer} >
-                        {show ?
-                            <View style={{ height: '95%' }}>
-                                <MapContainer />
-                            </View> :
-                            <Card style={styles.treeCard}>
-                                <Card.Content>
-                                    <Text variant="titleLarge" style={styles.title}>Add a tree</Text>
-                                    <View>
-                                        <FlatList
-                                            data={DATA}
-                                            renderItem={renderItem}
-                                            keyExtractor={(item) => item.id}
-                                            numColumns={2} // Number of boxes per row
-                                        />
-                                    </View>
-                                </Card.Content>
-                            </Card>}
-                    </View>
+                {formContent(step)}
 
-                )}
-                {step === 6 && (
-                    <View style={styles.stepContainer} >
-                        <Card style={styles.treeCard}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Images</Text>
-                                <View>
-                                    <FlatList
-                                        data={DATA}
-                                        renderItem={renderTreeImage}
-                                        keyExtractor={(item) => item.id}
-                                        numColumns={2} // Number of boxes per row
-                                    />
-                                </View>
-                            </Card.Content>
-                        </Card>
-                    </View>
-
-                )}
-                {step === 7 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>What species is this tree?</Text>
-                                <TextInput
-                                    label="Select Species"
-                                    mode="flat"
-                                    theme={{ colors: { primary: Color.gray, outline: Color.gray } }}
-                                    style={{ backgroundColor: "transparent", fontSize: 16, paddingHorizontal: 0 }}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    textColor={Color.black}
-                                />
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 8 && (
-                    <View style={styles.stepContainer}>
-                        {/* <SegmentedControl /> */}
-                        <Card style={styles.card}>
-                            <Card.Content style={{ marginVertical: 10 }}>
-                                <Text variant="titleLarge" style={styles.title}>Tree DBH?</Text>
-                                <TextInput
-                                    label="Tree DBH"
-                                    mode="flat"
-                                    theme={{ colors: { primary: Color.gray, outline: Color.gray } }}
-                                    style={{ backgroundColor: "transparent", fontSize: 16, paddingHorizontal: 0 }}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    textColor={Color.black}
-                                    render={() => (
-                                        <View style={{ flex: 1, alignItems: "flex-end", marginTop: 8 }}>
-                                            <SegmentedControl options={dbh} />
-                                        </View>
-                                    )}
-                                // left={<SegmentedControl />}
-                                />
-                            </Card.Content>
-                            <Card.Content style={{ marginVertical: 50 }}>
-                                <Text variant="titleLarge" style={styles.title}>How tall is this tree?</Text>
-                                <TextInput
-                                    label="Tree Height"
-                                    mode="flat"
-                                    theme={{ colors: { primary: Color.gray, outline: Color.gray } }}
-                                    style={{ backgroundColor: "transparent", fontSize: 16, paddingHorizontal: 0 }}
-                                    value={formData.name}
-                                    onChangeText={(text) => setFormData({ ...formData, name: text })}
-                                    textColor={Color.black}
-                                    render={() => (
-                                        <View style={{ flex: 1, alignItems: "flex-end", marginTop: 8 }}>
-                                            <SegmentedControl options={height} />
-                                        </View>
-                                    )}
-                                />
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 9 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>What is the health rating of this tree?</Text>
-                                <RadioButton.Group
-                                    onValueChange={(newValue) => setValue(newValue)}
-                                    value={value}>
-                                    {healthRate.map(renderOptions)}
-                                </RadioButton.Group>
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 10 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Is there hardscape damage?</Text>
-                                <RadioButton.Group
-                                    onValueChange={(newValue) => setValue(newValue)}
-                                    value={value}>
-                                    {hardScapeDamage.map(renderOptions)}
-                                </RadioButton.Group>
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 11 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Select inspection level</Text>
-                                <RadioButton.Group
-                                    onValueChange={(newValue) => setValue(newValue)}
-                                    value={value}>
-                                    {level.map(renderOptions)}
-                                </RadioButton.Group>
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 12 && (
-                    <View style={styles.stepContainer}>
-                        <Card style={styles.card}>
-                            <Card.Content>
-                                <Text variant="titleLarge" style={styles.title}>Is the tree near any structures or power lines?</Text>
-                                <RadioButton.Group
-                                    onValueChange={(newValue) => setValue(newValue)}
-                                    value={value}>
-                                    {treeDistance.map(renderOptions)}
-                                </RadioButton.Group>
-                            </Card.Content>
-                        </Card>
-                    </View>
-                )}
-                {step === 13 && (
+                {/* {step === 13 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
                             <Card.Content>
                                 <Text variant="titleLarge" style={styles.title}>
                                     Is this a heritage tree?</Text>
                                 <RadioButton.Group
-                                    onValueChange={(newValue) => setValue(newValue)}
-                                    value={value}>
+                                    onValueChange={(newValue) => setReportData({ ...reportData, heritageTree: newValue })}
+                                    value={reportData.heritageTree}>
                                     {heritageTree.map(renderOptions)}
                                 </RadioButton.Group>
                             </Card.Content>
                         </Card>
                     </View>
-                )}
-                {step === 14 && (
+                )} */}
+                {/* {step === 14 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
                             <Card.Content>
@@ -485,8 +525,8 @@ const MultiStepForm = ({ navigation }) => {
                             </Card.Content>
                         </Card>
                     </View>
-                )}
-                {step === 15 && (
+                )} */}
+                {/* {step === 15 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
                             <Card.Content>
@@ -500,8 +540,8 @@ const MultiStepForm = ({ navigation }) => {
                             </Card.Content>
                         </Card>
                     </View>
-                )}
-                {step === 16 && (
+                )} */}
+                {/* {step === 16 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
                             <Card.Content>
@@ -519,8 +559,8 @@ const MultiStepForm = ({ navigation }) => {
                             </Card.Content>
                         </Card>
                     </View>
-                )}
-                {step === 17 && (
+                )} */}
+                {/* {step === 17 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
                             <Card.Content>
@@ -534,8 +574,8 @@ const MultiStepForm = ({ navigation }) => {
                             </Card.Content>
                         </Card>
                     </View>
-                )}
-                {step === 18 && (
+                )} */}
+                {/* {step === 18 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
                             <Card.Content>
@@ -549,7 +589,7 @@ const MultiStepForm = ({ navigation }) => {
                             </Card.Content>
                         </Card>
                     </View>
-                )}
+                )} */}
                 <View style={step !== 1 && styles.buttonsContainer}>
                     {step > 1 && (
                         <Button
@@ -593,90 +633,6 @@ const MultiStepForm = ({ navigation }) => {
     );
 };
 
-const styles = StyleSheet.create({
-    safeAreaStyle: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
 
-    },
-    container: {
-        flex: 1,
-        padding: 20,
-        // margin: 20
 
-    },
-    card: {
-        // flex:1,
-        // margin: 16,
-        minHeight: 150,
-        maxHeight: 'auto',
-        // height: 150,
-        backgroundColor: Color.white
-    },
-    treeCard: {
-        marginBottom: 25,
-        width: '100%',
-        height: '80%'
-    },
-    AddTree: {
-        height: 180,
-        width: 150,
-        margin: 5,
-        padding: 4,
-        elevation: 5,
-        backgroundColor: Color.main1,
-        borderRadius: 15,
-        alignItems: 'center',
-        justifyContent: 'center'
-
-    },
-    title: {
-        textAlign: 'center',
-        color: Color.black,
-        fontSize: 18, margin: 5
-    },
-    progressContainer: {
-        width: '100%',
-        height: 5,
-        borderRadius: 30,
-        backgroundColor: 'lightgray',
-    },
-    progressBar: {
-        height: '100%',
-        paddingHorizontal: 0,
-        borderRadius: 30,
-        backgroundColor: Color.main,
-    },
-    stepContainer: {
-        flex: 1,
-        justifyContent: 'center',
-
-    },
-    label: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    buttonsContainer: {
-        flexDirection: 'row',
-        gap: 10,
-        justifyContent: 'center',
-    },
-    button: {
-        padding: 5,
-        borderRadius: 50,
-    },
-    nextButton: {
-        width: '40%',
-        padding: 5,
-        borderRadius: 50,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-});
-
-export default MultiStepForm;
+export default AddReport;

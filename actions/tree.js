@@ -2,7 +2,10 @@ import { ACTION_TYPES } from "../constants/actionTypes";
 import {
     fetchHealthRates,
     fetchJurisdiction,
-    fetchRecomendations
+    fetchRecomendations,
+    fetchTreeSpecies,
+    saveTree,
+    updateTree
    
 } from "../services/api";
 import { ErrorAlert } from "../common/alert";
@@ -38,7 +41,6 @@ export const fetchRecomendation = () => async (dispatch, getState) => {
     try {
         dispatch({ type: ACTION_TYPES.FETCH_RECOMENDATIONS_REQUEST })
         const { data } = await fetchRecomendations();
-        console.log("data", data)
         dispatch({ type: ACTION_TYPES.FETCH_RECOMENDATIONS_SUCCESS, payload: data.data })
     }
     catch (err) {
@@ -80,10 +82,6 @@ export const addTree = (reportId, res) => async (dispatch, getState) => {
         dispatch({ type: ACTION_TYPES.SAVE_TREE_REQUEST })
         const { data } = await saveTree(reportId, res)
         dispatch({ type: ACTION_TYPES.SAVE_TREE_SUCCESS, payload: data.data })
-        let val = {
-            status: "draft"
-        }
-        dispatch(updateReport(reportId, val))
     }
     catch (err) {
         console.log(err)
@@ -96,7 +94,6 @@ export const addTree = (reportId, res) => async (dispatch, getState) => {
 export const setTree = (res) => async (dispatch, getState) => {
     try {
         dispatch({ type: ACTION_TYPES.SET_TREE_REQUEST })
-        console.log("res", res)
         dispatch({ type: ACTION_TYPES.SET_TREE_SUCCESS, payload: res })
     }
     catch (err) {
