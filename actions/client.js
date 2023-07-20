@@ -13,7 +13,7 @@ export const fetchClientType = () => async (dispatch) => {
     catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_TYPES_FAILED })
-       
+        ErrorAlert(err)
     }
 }
 
@@ -47,13 +47,13 @@ export const fetchClients = () => async (dispatch, getState) => {
     try {
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_REQUEST })
         const { data } = await fetchAllClients()
-        console.log("data", data)
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_SUCCESS, payload: data.data })
         console.log("calling api ")
     }
     catch (err) {
         console.log(err?.response);
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_FAILED })
+        ErrorAlert(err)
     }
 }
 
@@ -103,7 +103,7 @@ export const deleteClientData = (clientId) => async (dispatch, getState) => {
     catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.DELETE_CLIENT_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -115,7 +115,7 @@ export const saveClientContact = (res) => async (dispatch, getState) => {
     catch (err) {
         console.log(err.message);
         dispatch({ type: "SAVE_CONTACT_DETAIL_FAILED" })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -128,7 +128,7 @@ export const setClientContact = (res) => async (dispatch, getState) => {
     catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.SET_CLIENT_CONTACT_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -140,6 +140,6 @@ export const fetchClientsWithReportId = (reportId) => async (dispatch, getState)
     } catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.FETCH_REPORT_CLIENT_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }

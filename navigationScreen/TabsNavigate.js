@@ -94,7 +94,7 @@ export default function TabsNavigate() {
           headerRight: () => (
             <TouchableOpacity
               style={{ marginRight: 16 }}
-              onPress={() => navigation.navigate('Add Property')}>
+              onPress={() => console.log("sddf")}>
               <Icon name="add" size={24} color="black" />
             </TouchableOpacity>
           ),

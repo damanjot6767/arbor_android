@@ -15,11 +15,9 @@ export const arboristAuth = (res) => async (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.ARBORIST_LOGIN_REQUEST })
     res.email = res.email.toLowerCase()
     const { data } = await arboristsLogin(res)
-    console.log("data", data)
     dispatch({ type: ACTION_TYPES.ARBORIST_LOGIN_SUCCESS, payload: data?.data })
   }
   catch (err) {
-    console.log("err", err?.response?.data);
     ErrorAlert(err)
     dispatch({ type: ACTION_TYPES.ARBORIST_LOGIN_FAILED })
   }
@@ -42,7 +40,6 @@ export const forgotPass = (res, navigation) => async (dispatch, getState) => {
     console.log("res", res)
     dispatch({ type: ACTION_TYPES.ARBORIST_FORGOTPASSWORD_REQUEST })
     const { data } = await forgotPassword(res)
-    console.log("data", data)
     dispatch({ type: ACTION_TYPES.ARBORIST_FORGOTPASSWORD_SUCCESS, payload: {} })
     // setCodeSent(false)       
     Alert.alert(

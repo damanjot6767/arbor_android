@@ -11,7 +11,6 @@ export default function Report({ navigation }) {
   const dispatch = useDispatch()
   const [selectedText, setSelectedText] = useState('Text 1');
   const { allReports, loader } = useSelector(({ report }) => report)
-  console.log("report", allReports?.data?.map((val) => val?.reportName))
 
   useEffect(() => {
     dispatch(getReport())

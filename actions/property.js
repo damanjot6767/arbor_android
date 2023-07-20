@@ -1,7 +1,9 @@
 import { ACTION_TYPES } from "../constants/actionTypes";
 import {
     fetchProperties,
+    fetchClientProperty
 } from "../services/api";
+import { ErrorAlert } from "../common/alert";
 
 export const AddProperty = (res, navigate, location) => async (dispatch, getState) => {
     try {
@@ -17,7 +19,7 @@ export const AddProperty = (res, navigate, location) => async (dispatch, getStat
     catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.ADD_PROPERTY_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -25,12 +27,13 @@ export const fetchAllProperties = () => async (dispatch, getState) => {
     try {
         dispatch({ type: ACTION_TYPES.FETCH_PROPERTY_REQUEST })
         const { data } = await fetchProperties()
-        console.log("data", data)
         dispatch({ type: ACTION_TYPES.FETCH_PROPERTY_SUCCESS, payload: data.data })
     }
     catch (err) {
         console.log(err);
         dispatch({ type: ACTION_TYPES.FETCH_PROPERTY_FAILED })
+        ErrorAlert(err)
+
     }
 }
 
@@ -43,7 +46,7 @@ export const setProperty = (res) => async (dispatch, getState) => {
     catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.SET_PROPERTY_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -60,7 +63,7 @@ export const editProperty = (res, navigate) => async (dispatch, getState) => {
     catch (err) {
         console.log(err.message);
         dispatch({ type: ACTION_TYPES.EDIT_PROPERTY_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -75,7 +78,7 @@ export const deleteproperty = (row, Ids) => async (dispatch, getState) => {
     catch (err) {
         console.log(err.message)
         dispatch({ type: ACTION_TYPES.DELETE_PROPERTY_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 }
 
@@ -88,7 +91,7 @@ export const getclientProperty = (id) => async (dispatch, getState) => {
     catch (err) {
         console.log(err)
         dispatch({ type: ACTION_TYPES.FETCH_CLIENT_PROPERTY_FAILED })
-        NotificationError(err)
+        ErrorAlert(err)
     }
 
 }
