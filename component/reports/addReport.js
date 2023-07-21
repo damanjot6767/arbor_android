@@ -495,7 +495,44 @@ const AddReport = ({ navigation }) => {
             </View>
             <View style={styles.container}>
                 {formContent(step)}
-
+                <View style={step !== 1 && styles.buttonsContainer}>
+                    {step > 1 && (
+                        <Button
+                            style={step === 1 ? styles.button : styles.nextButton}
+                            contentStyle={{ flexDirection: 'row-reverse' }}
+                            mode="contained"
+                            labelStyle={{ fontSize: 15, marginRight: 28 }}
+                            buttonColor={Color.main}
+                            onPress={handlePreviousStep}>
+                            Previous
+                        </Button>
+                    )}
+                    {step < steps?.length && (
+                        <Button
+                            style={step === 1 ? styles.button : styles.nextButton}
+                            contentStyle={{ flexDirection: 'row-reverse' }}
+                            mode="contained"
+                            labelStyle={{ fontSize: 15, marginRight: 28 }}
+                            buttonColor={Color.main}
+                            onPress={handleNextStep}>
+                            Next
+                        </Button>
+                        // <TouchableOpacity style={styles.button} onPress={handleNextStep}>
+                        //     <Text style={styles.buttonText}>Next</Text>
+                        // </TouchableOpacity>
+                    )}
+                    {step === steps?.length && (
+                        <Button
+                            style={styles.button}
+                            contentStyle={{ flexDirection: 'row-reverse' }}
+                            mode="contained"
+                            labelStyle={{ fontSize: 15, marginRight: 28 }}
+                            buttonColor={Color.main}
+                            onPress={handleNextStep}>
+                            Submit
+                        </Button>
+                    )}
+                </View>
                 {/* {step === 13 && (
                     <View style={styles.stepContainer}>
                         <Card style={styles.card}>
@@ -590,44 +627,7 @@ const AddReport = ({ navigation }) => {
                         </Card>
                     </View>
                 )} */}
-                <View style={step !== 1 && styles.buttonsContainer}>
-                    {step > 1 && (
-                        <Button
-                            style={step === 1 ? styles.button : styles.nextButton}
-                            contentStyle={{ flexDirection: 'row-reverse' }}
-                            mode="contained"
-                            labelStyle={{ fontSize: 15, marginRight: 28 }}
-                            buttonColor={Color.main}
-                            onPress={handlePreviousStep}>
-                            Previous
-                        </Button>
-                    )}
-                    {step < steps?.length && (
-                        <Button
-                            style={step === 1 ? styles.button : styles.nextButton}
-                            contentStyle={{ flexDirection: 'row-reverse' }}
-                            mode="contained"
-                            labelStyle={{ fontSize: 15, marginRight: 28 }}
-                            buttonColor={Color.main}
-                            onPress={handleNextStep}>
-                            Next
-                        </Button>
-                        // <TouchableOpacity style={styles.button} onPress={handleNextStep}>
-                        //     <Text style={styles.buttonText}>Next</Text>
-                        // </TouchableOpacity>
-                    )}
-                    {step === steps?.length && (
-                        <Button
-                            style={styles.button}
-                            contentStyle={{ flexDirection: 'row-reverse' }}
-                            mode="contained"
-                            labelStyle={{ fontSize: 15, marginRight: 28 }}
-                            buttonColor={Color.main}
-                            onPress={handleNextStep}>
-                            Submit
-                        </Button>
-                    )}
-                </View>
+               
             </View>
         </SafeAreaView >
     );
