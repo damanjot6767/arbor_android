@@ -32,7 +32,7 @@ export const report =(state = initialState, action)=>{
         case ACTION_TYPES.EMPTY_REPORTS_REQUEST:
             return {...state, rloader:true}
         case ACTION_TYPES.EMPTY_REPORTS_SUCCESS:
-            return {...state, reports:action.payload, report:action.payload, rloader:false}
+            return {...state, reports:action.payload, report:action.payload, trees:action.payload, rloader:false}
         case ACTION_TYPES.EMPTY_REPORTS_FAILED:
             return {...state, rloader:false}
         

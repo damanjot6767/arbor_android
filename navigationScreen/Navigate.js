@@ -10,11 +10,12 @@ import { Button } from "react-native-paper";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import AddClient from "../component/clients/addClient";
-import Map from "../common/map";
 import EditProfile from "../component/profile/editProfile";
 import { Color } from "../constants/colors";
-import MultiStepForm from "../component/reports/addReport";
 import EditClient from "../component/clients/editClient";
+import AddReport from '../component/reports/addReport';
+import { emptyReports } from '../actions/report';
+import { useDispatch } from 'react-redux';
 
 const LazyTabComponent = React.lazy(() => import("./TabsNavigate"));
 const LazyReportComponent = React.lazy(() => import("../component/reports"));
@@ -46,17 +47,17 @@ const TabWrapper = (props) => (
 );
 
 export default function Navigate() {
+  const dispatch = useDispatch()
   return (
     <Stack.Navigator
       screenOptions={{
-        headerTitleAlign: "center",
-        headerStyle: { backgroundColor: "#ECF4F3", borderBottomWidth: 1 },
+        headerTitleAlign: 'center',
+        headerStyle: { backgroundColor: '#ECF4F3', borderBottomWidth: 1 },
         headerTitleStyle: {
           color: Color.main,
         },
         animationEnabled: false,
-      }}
-    >
+      }}>
       <Stack.Screen
         name="TabsStack"
         component={TabWrapper}
@@ -88,9 +89,9 @@ export default function Navigate() {
             <TouchableOpacity
               style={{ marginRight: 16 }}
               onPress={() => {
-                navigation.navigate("Add Report");
-              }}
-            >
+                navigation.navigate('Add Report')
+                dispatch(emptyReports())
+              }}>
               <Icon name="add" size={24} color="black" />
             </TouchableOpacity>
           ),
@@ -98,7 +99,7 @@ export default function Navigate() {
       />
       <Stack.Screen
         name="Add Report"
-        component={MultiStepForm}
+        component={AddReport}
         options={() => ({
           headerRight: () => (
             <Button
